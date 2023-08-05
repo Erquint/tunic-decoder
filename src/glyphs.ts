@@ -1,6 +1,9 @@
 // Warning: The spoiler zone! If you want to keep the surprise/puzzle unspoilt and solve it yourself, do not scroll through this file!
 // It straight up describes the writing system, sorry <3
 
+import constants from '/src/constants.ts';
+const {hl, hs, glyphOffset, glyphScale, cy} = constants;
+
 export class Paragraph {
     words: Word[] = [];
     description: string = "";
@@ -45,16 +48,14 @@ export class Word {
         this.plaintext = text ?? this.plaintext;
     }
 
-    async toBlob(targetCanvas: HTMLCanvasElement, scale = 2, splitComponents = false): Promise<string> {
-        const s = scale;
-
+    async toBlob(targetCanvas: HTMLCanvasElement, scale = 3, splitComponents = false): Promise<string> {
         const context = targetCanvas.getContext("2d");
         if (!context) throw "No 2D context";
 
-        targetCanvas.height = 18 * s;
-        targetCanvas.width = (2 + this.glyphs.length * 8) * s;
-        context.clearRect(0, 0, targetCanvas.width, 18 * s);
-        this.render(context, 1 * s, 1 * s, s, "#000000", undefined, splitComponents);
+        targetCanvas.width = (glyphOffset + this.glyphs.length * hs) * scale;
+        targetCanvas.height = (glyphOffset + hl) * scale;
+        // context.clearRect(0, 0, targetCanvas.width, targetCanvas.height);
+        this.render(context, scale, scale, scale, "#000000", undefined, splitComponents);
 
         const toBlobPromise = new Promise<string>((resolve, reject) => {
             targetCanvas.toBlob((blob) => {
@@ -80,15 +81,10 @@ export class Word {
         outColor?: string
     ) {
         let n = 0;
-        if (debugRect) {
-            ctx.clearRect(x - 4 * scaling, y, (this.glyphs.length + 1) * 8 * scaling, 16 * scaling);
-            ctx.fillStyle = "#f88";
-            ctx.fillRect(x - 4 * scaling, y, (this.glyphs.length + 1) * 8 * scaling, 16 * scaling);
-        }
         for (const glyph of this.glyphs) {
             glyph.render(
                 ctx,
-                x + n * 8 * scaling,
+                x + n * hs * scaling,
                 y,
                 false,
                 scaling,
@@ -101,12 +97,15 @@ export class Word {
         }
     }
 
-    toGlyphString = () => this.glyphs.map((g) => g.toString()).join(" ");
+    toGlyphString() {
+        return this.glyphs.map((g) => g.toString()).join(" ");
+    }
 
-    toPhonetic = () =>
-        this.glyphs
+    toPhonetic() {
+        return this.glyphs
             .map(g => g.toPhonetic())
             .join('');
+    }
 
     toString() {
         if (this.plaintext.trim() != "") return this.plaintext;
@@ -142,24 +141,22 @@ type GlyphContext = {
 };
 
 const lines = [
-    { n: 0, x: 4, y: 0.5, dx: -4, dy: 2.5, in: false },
-    { n: 1, x: 4, y: 0.5, dx: 4, dy: 2.5, in: false },
-    { n: 2, x: 0, y: 3, dx: 4, dy: 2.5, in: true },
-    { n: 3, x: 8, y: 3, dx: -4, dy: 2.5, in: true },
-
-    { n: 4, x: 0, y: 3, dx: 0, dy: 5, in: false },
-    { n: 5, x: 4, y: 0.5, dx: 0, dy: 5, in: true },
-    { n: 6, x: 8, y: 3, dx: 0, dy: 5, in: false },
-    { n: 7, x: 4, y: 5.5, dx: 0, dy: 2.5, in: true },
-
-    { n: 8, x: 4, y: 9.5, dx: -4, dy: 2.5, in: true },
-    { n: 9, x: 4, y: 9.5, dx: 4, dy: 2.5, in: true },
-    { n: 10, x: 0, y: 12, dx: 4, dy: 2.5, in: false },
-    { n: 11, x: 8, y: 12, dx: -4, dy: 2.5, in: false },
-
-    { n: 12, x: 0, y: 9.5, dx: 0, dy: 2.5, in: false },
-    { n: 13, x: 4, y: 9.5, dx: 0, dy: 5, in: true },
-    { n: 14, x: 8, y: 9.5, dx: 0, dy: 2.5, in: false },
+    { n: 0,  x: hs / 2, y: 0     , dx: -(hs / 2), dy:   hl / 4 , in: false }, // TL
+    { n: 1,  x: hs / 2, y: 0     , dx:   hs / 2 , dy:   hl / 4 , in: false }, // TR
+    { n: 2,  x: hs / 2, y: hl / 2, dx: -(hs / 2), dy: -(hl / 4), in: true },  // TLi
+    { n: 3,  x: hs / 2, y: hl / 2, dx:   hs / 2 , dy: -(hl / 4), in: true },  // TRi
+    { n: 4,  x: 0     , y: hl / 4, dx:   0      , dy:   hl / 2 , in: false }, // LT
+    { n: 5,  x: hs / 2, y: 0     , dx:   0      , dy:   hl / 2 , in: true },  // TMi
+    { n: 6,  x: hs    , y: hl / 4, dx:   0      , dy:   hl / 2 , in: false }, // RT
+    // { n: 7,  x: 0,      y: 0,      dx:   0,       dy:   0,       in: true },  // MCi
+    
+    { n: 8,  x: hs / 2, y: hl / 2, dx: -(hs / 2), dy:   hl / 4,  in: true },  // BLi
+    { n: 9,  x: hs / 2, y: hl / 2, dx:   hs / 2 , dy:   hl / 4,  in: true },  // BRi
+    { n: 10, x: hs / 2, y: hl,     dx: -(hs / 2), dy: -(hl / 4), in: false }, // BL
+    { n: 11, x: hs / 2, y: hl,     dx:   hs / 2 , dy: -(hl / 4), in: false }, // BR
+    // { n: 12, x: 0,      y: hl,     dx:   0,       dy:   0,       in: false }, // LB
+    { n: 13, x: hs / 2, y: hl,     dx:   0,       dy: -(hl / 2), in: true },  // BMi
+    // { n: 14, x: hs,     y: hl,     dx:   0,       dy:   0,       in: false }, // RB
 ];
 
 const phonemes = {
@@ -257,7 +254,17 @@ export class Glyph {
             y,
             scaling,
         };
-
+        for (const line of lines) {
+            this.line(
+                context,
+                line.x,
+                line.y,
+                line.dx,
+                line.dy,
+                [0, 1, 4, 6, 10, 11].includes(line.n),
+                "#0000000F"
+            );
+        }
         for (const line of lines.filter((l) => l.in)) {
             this.line(
                 context,
@@ -280,10 +287,7 @@ export class Glyph {
                 splitComponents ? outColor : color
             );
         }
-
-        this.circle(context, 4, 15.5, 1, this.encoded & (2 ** 15));
-
-        this.line(context, 0, 8, 8, 0, true, color, "square");
+        this.circle(context, hs / 2, cy, 1, this.encoded & (2 ** 15));
     }
 
     line(
@@ -323,7 +327,7 @@ export class Glyph {
 
         ctx.canvas.beginPath();
         ctx.canvas.arc(lx, ly, r * ctx.scaling, 0, Math.PI * 2, true);
-        ctx.canvas.lineWidth = 1 * ctx.scaling;
+        ctx.canvas.lineWidth = ctx.scaling;
         ctx.canvas.strokeStyle = color;
         ctx.canvas.stroke();
     }

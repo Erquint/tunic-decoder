@@ -11,10 +11,10 @@
             <h2 class="card-title">Glyph input</h2>
         </div>
         <div class="card-body d-flex glyph">
-            <IconGlyph :height="512" :row="state.row" v-model="props.glyph.encoded" />
+            <IconGlyph :height="384" :row="state.row" v-model="props.glyph.encoded" />
         </div>
         <div class="card-footer">
-            <canvas ref="canvas" :height="18 * glyphScale" :width="canvasWidth"></canvas>
+            <canvas ref="canvas"></canvas>
             <div>
                 <span class="text-muted" v-if="props.word.glyphs.length > 0">{{
                     props.word.toGlyphString()
@@ -60,17 +60,13 @@
     </div>
 </template>
 
-<style scoped>
-.glyph-input {
-    position: sticky;
-    top: 24px;
-}
-</style>
-
 <script setup lang="ts">
 import IconGlyph from "./icons/IconGlyph.vue";
 import { Word, Glyph } from "@/glyphs";
 import { computed, nextTick, onMounted, onUnmounted, reactive, ref, watch, type PropType } from "vue";
+
+import constants from '/src/constants.ts';
+const {hl, hs, glyphOffset, glyphScale} = constants;
 
 const props = defineProps({
     word: { type: Word, required: true },
@@ -83,15 +79,13 @@ const emit = defineEmits<{
     (e: "update:word", value: Word): void;
 }>();
 
-const glyphScale = ref(2);
-
-const focused = ref(false);
+const focused = false;
 const canvas = ref<HTMLCanvasElement>();
 const state = reactive({
     stashedGlyphs: [] as number[],
     row: undefined as number | undefined,
 });
-const canvasWidth = (2 + 10 * 8) * glyphScale.value;
+const canvasHeight = (glyphOffset + hl) * glyphScale;
 
 watch(
     () => props.word,
@@ -105,35 +99,40 @@ watch(
 
 function renderCanvas() {
     if (!canvas.value) return;
+    canvas.value.width = (glyphOffset + (props.word.glyphs.length + 1) * hs) * glyphScale;
+    canvas.value.height = canvasHeight;
     const context = canvas.value.getContext("2d");
     if (!context) return;
 
-    console.log(props.showSecrets);
-
-    const s = glyphScale.value;
-    context.clearRect(0, 0, canvasWidth, 18 * s);
+    context.clearRect(0, 0, canvas.value.width, canvas.value.height);
     props.word.render(
         context,
-        1 * s,
-        1 * s,
-        s,
+        glyphOffset * glyphScale,
+        glyphOffset,
+        glyphScale,
         "#6c757d",
         undefined,
         props.showSecrets,
         "#5ca1ab",
         "#a6615b"
     );
-    let offset = 1 + props.word.glyphs.length * 8;
-    props.glyph.render(context, offset * s, 1 * s, false, s);
+    let position = props.word.glyphs.length;
+    props.glyph.render(
+        context,
+        (glyphOffset + position * hs) * glyphScale,
+        glyphOffset,
+        false,
+        glyphScale
+    );
 
     for (const stashed of state.stashedGlyphs) {
-        offset += 8;
+        position++;
         new Glyph(stashed).render(
             context,
-            offset * s,
-            1 * s,
+            (glyphOffset + position * hs) * glyphScale,
+            glyphOffset,
             false,
-            s,
+            glyphScale,
             "#a6615b",
             props.showSecrets,
             "#5ca1ab",

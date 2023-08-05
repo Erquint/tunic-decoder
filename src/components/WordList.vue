@@ -1,5 +1,5 @@
 <template>
-    <div class="card">
+    <div class="word-list card d-flex flex-column">
         <div class="card-header">
             <h2 class="card-title d-flex justify-content-between align-items-center">
                 Words <span class="text-muted">{{ words.length }}</span>

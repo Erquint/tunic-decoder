@@ -1,84 +1,53 @@
 <template>
     <svg
+        viewBox="-1 -1 13 13"
         class="mx-auto"
         ref="root"
         :height="height"
-        viewBox="0 0 16 32"
         version="1.1"
         id="svg5"
         inkscape:version="1.1.2 (0a00cf5339, 2022-02-04, custom)"
-        sodipodi:docname="glyph.svg"
         xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-        xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
         xmlns="http://www.w3.org/2000/svg"
         xmlns:svg="http://www.w3.org/2000/svg"
     >
-        <sodipodi:namedview
-            id="namedview7"
-            pagecolor="#ffffff"
-            bordercolor="#666666"
-            borderopacity="1.0"
-            inkscape:pageshadow="2"
-            inkscape:pageopacity="0.0"
-            inkscape:pagecheckerboard="0"
-            inkscape:document-units="px"
-            showgrid="false"
-            height="32px"
-            inkscape:zoom="22.627417"
-            inkscape:cx="5.9883106"
-            inkscape:cy="17.147339"
-            inkscape:window-width="1920"
-            inkscape:window-height="1021"
-            inkscape:window-x="0"
-            inkscape:window-y="0"
-            inkscape:window-maximized="1"
-            inkscape:current-layer="high"
-        />
         <defs id="defs2" />
-        <g inkscape:label="Layer 1" inkscape:groupmode="layer" id="layer1">
+        <mask id="hole">
+            <rect x="-0.8" y="-0.8" width="13.6" height="13.6" fill="white"></rect>
+            <circle cx="5.2" cy="10.55" r="0.85"></circle>
+        </mask>
+        <g id="canvas">
+            <!-- hs = 10.392304845413264, 5.196152422706632; hl = 12, 6, 3 -->
+            <!-- <rect x="-0.4" y="-0.4" width="11.2" height="12.8" />  -->
             <g id="high">
-                <path d="m 8,2.5 -7,4.5" id="high_1" class="line" />
-                <path d="m 8,2.5 7,4.5" id="high_2" class="line" />
-                <path d="m 1,7 7,4.5" id="high_3" class="line" />
-                <path d="m 15,7 -7,4.5" id="high_4" class="line" />
-                <path d="m 1,7 v 8.5" id="high_5" class="line" />
-                <path d="m 8,2.5 v 9" id="high_6" class="line" />
-                <path d="m 15,7 v 8.5" id="high_7" class="line" />
-                <path d="m 8,11.5 v 4" id="high_8" class="line" />
+                <path d="m 5.2 , 0  -5.2,  3" id="high_1" class="line" />
+                <path d="m 5.2 , 0   5.2,  3" id="high_2" class="line" />
+                <path d="m 5.2 , 6  -5.2, -3" id="high_3" class="line" />
+                <path d="m 5.2 , 6   5.2, -3" id="high_4" class="line" />
+                <path d="m 0   , 3   v     6" id="high_5" class="line" />
+                <path d="m 5.2 , 0   v     6" id="high_6" class="line" />
+                <path d="m 10.4, 3   v     6" id="high_7" class="line" />
+           <!-- <path d="m 0   , 0   v     0" id="high_8" class="line" /> Trash. -->
             </g>
             <g id="low">
-                <path d="m 8,17.5 -7,4.5" id="low_1" class="line" />
-                <path d="m 8,17.5 7,4.5" id="low_2" class="line" />
-                <path d="m 1,22 7,4.5" id="low_3" class="line" />
-                <path d="m 15,22 -7,4.5" id="low_4" class="line" />
-                <path d="m 1,17.5 0,4.5" id="low_5" class="line" />
-                <path d="m 8,17.5 v9" id="low_6" class="line" />
-                <path d="m 15,17.5 0,4.5" id="low_7" class="line" />
-                <circle id="low_8" cx="8" cy="28" r="1.5" class="line" />
+                <path d="m 5.2 , 6  -5.2,  3" id="low_1" class="line" />
+                <path d="m 5.2 , 6   5.2,  3" id="low_2" class="line" />
+           <!-- <path d="m 0   , 12  v     0" id="low_5" class="line" /> Trash. -->
+           <!-- <path d="m 10.4, 12  v     0" id="low_7" class="line" /> Trash. -->
+                <circle cx="5.2" cy="10.55" r="1.25" id="low_8" class="line" />
+                <path d="m 5.2 , 12 -5.2, -3" id="low_3" class="line" />
+                <path d="m 5.2 , 12  5.2, -3" id="low_4" class="line" />
+                <path d="m 5.2 , 6   v     6" id="low_6" class="line" />
             </g>
             <g id="caps">
-                <circle cx="8" cy="2.5" r="1" />
-                <circle cx="1" cy="7" r="1" />
-                <circle cx="15" cy="7" r="1" />
-                <circle cx="8" cy="11.5" r="1" />
-
-                <circle cx="8" cy="17.5" r="1" />
-                <circle cx="1" cy="22" r="1" />
-                <circle cx="15" cy="22" r="1" />
-                <circle cx="8" cy="26.5" r="1" />
+                <circle cx="5.2"          r="0.8" /> <!-- TM -->
+                <circle           cy="3"  r="0.8" /> <!-- TL -->
+                <circle cx="10.4" cy="3"  r="0.8" /> <!-- TR -->
+                <circle cx="5.2"  cy="6"  r="0.8" /> <!-- CM -->
+                <circle           cy="9"  r="0.8" /> <!-- BL -->
+                <circle cx="10.4" cy="9"  r="0.8" /> <!-- BR -->
+                <circle cx="5.2"  cy="12" r="0.8" /> <!-- BM -->
             </g>
-            <path
-                style="
-                    fill: none;
-                    stroke: #000000;
-                    stroke-width: 1px;
-                    stroke-linecap: square;
-                    stroke-linejoin: round;
-                    stroke-opacity: 1;
-                "
-                d="M 1.0,15.5 15.0,15.5"
-                id="baseline"
-            />
         </g>
     </svg>
 </template>
@@ -98,7 +67,7 @@ const emit = defineEmits<{
 const root = ref<SVGElement>();
 function updateState(state: number, skip: number | null = null) {
     for (let i = 0; i < 16; i++) {
-        if (i == skip) continue;
+        if ([skip, 7, 12, 14].includes(i)) continue;
         const lineId = `#${i < 8 ? "high" : "low"}_${(i % 8) + 1}`;
         const lineElem = root.value?.querySelector(lineId);
         if (!lineElem) throw "Element not found: " + lineId;
@@ -123,13 +92,31 @@ watch(
 
 onMounted(() => {
     updateState(props.modelValue);
+    const canvas = root.value?.querySelector<SVGElement>("g#canvas");
     for (let i = 0; i < 16; i++) {
+        if ([7, 12, 14].includes(i)) continue;
         const lineId = `#${i < 8 ? "high" : "low"}_${(i % 8) + 1}`;
         const lineElem = root.value?.querySelector<SVGElement>(lineId);
         if (!lineElem) throw "Element not found: " + lineId;
         lineElem.addEventListener("click", (event) => {
-            const newState = lineElem.classList.toggle("hide");
-            const newValue = props.modelValue ^ (2 ** i);
+            lineElem.classList.toggle("hide");
+            let newValue = props.modelValue ^ (2 ** i);
+            if ([4, 6].includes(i)) {
+                newValue = newValue ^ (2 ** (i + 8))
+            } else if ([5, 13].includes(i)) {
+                if (newValue & (2 ** 5 | 2 ** 13)) {
+                    newValue |=   2 ** 7
+                } else {
+                    newValue &= ~(2 ** 7)
+                }
+            }
+            if (i == 15) {
+                if (newValue & 2 ** 15) {
+                    canvas?.classList.add("masked");
+                } else {
+                    canvas?.classList.remove("masked");
+                }
+            }
             updateState(newValue, i);
             emit("update:modelValue", newValue);
         });
@@ -145,12 +132,16 @@ function line(n: number) {}
     stroke: #000000;
     stroke-linecap: round;
     stroke-linejoin: round;
-    stroke-width: 1px;
+    stroke-width: 0.8;
     transition: stroke 200ms ease;
     cursor: pointer;
 }
 .line.hide {
     stroke: #00000000;
+}
+
+.masked {
+    mask: url(#hole)
 }
 
 .glyph-input:hover .line.highlight,

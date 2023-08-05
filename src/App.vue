@@ -251,8 +251,59 @@ function storageAvailable(type: string) {
 </script>
 
 <style>
-html {
+html,
+div#app,
+main.container,
+div.row,
+div.card,
+div.col-12.col-lg-4.d-lg-block,
+footer.text-center.mx-auto.px-4.pb-2.d-flex.flex-column
+{
+    margin: 0!important;
+    padding: 0!important;
+}
+
+html,
+div#app,
+main.container,
+div.row
+{
+    width: 100vw!important;
+    height: 100vh!important;
+}
+
+div.card {
+    position: fixed;
+    top: 0;
+    width: 30vw;
+    height: 93vh;
+}
+
+div.glyph-input {
+    left: 0;
+    width: 30vw;
+}
+
+div.word-list {
+    left: 30vw;
+    width: 40vw;
+}
+
+div.text-list {
+    right: 0;
+    width: 30vw;
+}
+
+ul.list-group {
+    overflow-x: hidden;
     overflow-y: scroll;
+}
+
+footer.text-center.mx-auto.px-4.pb-2.d-flex.flex-column {
+    position: fixed;
+    bottom: 0;
+    width: 100vw;
+    height: 2lh;
 }
 
 .cursor-pointer {
@@ -310,7 +361,7 @@ html {
                 />
             </div>
             <div class="col-12 col-lg-4 d-lg-block" :class="{ 'd-none': state.page != 'texts', 'd-block': state.page == 'texts' }">
-                <div class="card">
+                <div class="text-list card d-flex flex-column">
                     <div class="card-header">
                         <h2 class="card-title d-flex justify-content-end align-items-end">
                             <span class="flex-fill">Texts</span>
