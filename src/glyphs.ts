@@ -52,10 +52,10 @@ export class Word {
         const context = targetCanvas.getContext("2d");
         if (!context) throw "No 2D context";
 
-        targetCanvas.width = (glyphOffset + this.glyphs.length * hs) * scale;
-        targetCanvas.height = (glyphOffset + hl) * scale;
+        targetCanvas.width = (2 * glyphOffset + this.glyphs.length * hs) * scale;
+        targetCanvas.height = (2 * glyphOffset + hl) * scale;
         // context.clearRect(0, 0, targetCanvas.width, targetCanvas.height);
-        this.render(context, scale, scale, scale, "#000000", undefined, splitComponents);
+        this.render(context, glyphOffset, glyphOffset, scale, "#000000", undefined, splitComponents);
 
         const toBlobPromise = new Promise<string>((resolve, reject) => {
             targetCanvas.toBlob((blob) => {

@@ -19,34 +19,32 @@
         <g id="canvas">
             <!-- hs = 10.392304845413264, 5.196152422706632; hl = 12, 6, 3 -->
             <!-- <rect x="-0.4" y="-0.4" width="11.2" height="12.8" />  -->
-            <g id="high">
-                <path d="m 5.2 , 0  -5.2,  3" id="high_1" class="line" />
-                <path d="m 5.2 , 0   5.2,  3" id="high_2" class="line" />
-                <path d="m 5.2 , 6  -5.2, -3" id="high_3" class="line" />
-                <path d="m 5.2 , 6   5.2, -3" id="high_4" class="line" />
-                <path d="m 0   , 3   v     6" id="high_5" class="line" />
-                <path d="m 5.2 , 0   v     6" id="high_6" class="line" />
-                <path d="m 10.4, 3   v     6" id="high_7" class="line" />
-           <!-- <path d="m 0   , 0   v     0" id="high_8" class="line" /> Trash. -->
-            </g>
-            <g id="low">
-                <path d="m 5.2 , 6  -5.2,  3" id="low_1" class="line" />
-                <path d="m 5.2 , 6   5.2,  3" id="low_2" class="line" />
-           <!-- <path d="m 0   , 12  v     0" id="low_5" class="line" /> Trash. -->
-           <!-- <path d="m 10.4, 12  v     0" id="low_7" class="line" /> Trash. -->
-                <circle cx="5.2" cy="10.55" r="1.25" id="low_8" class="line" />
-                <path d="m 5.2 , 12 -5.2, -3" id="low_3" class="line" />
-                <path d="m 5.2 , 12  5.2, -3" id="low_4" class="line" />
-                <path d="m 5.2 , 6   v     6" id="low_6" class="line" />
+            <g id="lines">
+                <path d="m 5.2 , 0  -5.2,  3"        id="0" class="line" />
+                <path d="m 5.2 , 0   5.2,  3"        id="1" class="line" />
+                <path d="m 5.2 , 6  -5.2, -3"        id="2" class="line" />
+                <path d="m 5.2 , 6   5.2, -3"        id="3" class="line" />
+                <path d="m 0   , 3   v     6"        id="4" class="line" />
+                <path d="m 5.2 , 0   v     6"        id="5" class="line" />
+                <path d="m 10.4, 3   v     6"        id="6" class="line" />
+           <!-- <path d="m 0   , 0   v     0"        id="7" class="line" /> Trash. -->
+                <path d="m 5.2 , 6  -5.2,  3"        id="8" class="line" />
+                <path d="m 5.2 , 6   5.2,  3"        id="9" class="line" />
+           <!-- <path d="m 0   , 12  v     0"        id="12" class="line" /> Trash. -->
+           <!-- <path d="m 10.4, 12  v     0"        id="14" class="line" /> Trash. -->
+                <circle cx="5.2" cy="10.55" r="1.25" id="15" class="line" />
+                <path d="m 5.2 , 12 -5.2, -3"        id="10" class="line" />
+                <path d="m 5.2 , 12  5.2, -3"        id="11" class="line" />
+                <path d="m 5.2 , 6   v     6"        id="13" class="line" />
             </g>
             <g id="caps">
-                <circle cx="5.2"          r="0.8" /> <!-- TM -->
-                <circle           cy="3"  r="0.8" /> <!-- TL -->
-                <circle cx="10.4" cy="3"  r="0.8" /> <!-- TR -->
-                <circle cx="5.2"  cy="6"  r="0.8" /> <!-- CM -->
-                <circle           cy="9"  r="0.8" /> <!-- BL -->
-                <circle cx="10.4" cy="9"  r="0.8" /> <!-- BR -->
-                <circle cx="5.2"  cy="12" r="0.8" /> <!-- BM -->
+                <circle cx="5.2"          r="0.8" class="cap"/> <!-- TM -->
+                <circle           cy="3"  r="0.8" class="cap"/> <!-- TL -->
+                <circle cx="10.4" cy="3"  r="0.8" class="cap"/> <!-- TR -->
+                <circle cx="5.2"  cy="6"  r="0.8" class="cap"/> <!-- CM -->
+                <circle           cy="9"  r="0.8" class="cap"/> <!-- BL -->
+                <circle cx="10.4" cy="9"  r="0.8" class="cap"/> <!-- BR -->
+                <circle cx="5.2"  cy="12" r="0.8" class="cap"/> <!-- BM -->
             </g>
         </g>
     </svg>
@@ -65,15 +63,42 @@ const emit = defineEmits<{
 }>();
 
 const root = ref<SVGElement>();
-function updateState(state: number, skip: number | null = null) {
-    for (let i = 0; i < 16; i++) {
-        if ([skip, 7, 12, 14].includes(i)) continue;
-        const lineId = `#${i < 8 ? "high" : "low"}_${(i % 8) + 1}`;
-        const lineElem = root.value?.querySelector(lineId);
-        if (!lineElem) throw "Element not found: " + lineId;
-        lineElem.classList.toggle("hide", (state & (2 ** i)) == 0)
-        lineElem.classList.toggle("highlight", props.row != undefined && Math.floor(i / 4) == props.row);
+let canvas;
+
+function sortedLines(canvas) {
+    return [...canvas.querySelectorAll('.line')].sort((a, b) => {a.id - b.id});
+}
+
+// In `value`, the `destination` bit is set to the state of `source` bit.
+function mirrorBit(value, source, destination) {
+    return ((value & ~(2**destination)) | ((!!(value & 2**source)) << destination));
+}
+
+// In `value`, the `destination` bit is set in accorance with
+// whether either of bits `source_a` or `source_b` is set.
+function mirrorBitOr(value, source_a, source_b, destination) {
+    return ((value & ~(2**destination)) | ((!!(value & (2**source_a | 2**source_b))) << destination));
+}
+
+function updateState(eventOrState) {
+    let state: number;
+    if (eventOrState.constructor === PointerEvent) {
+        // eventOrState.target.classList.toggle("hide");
+        state = props.modelValue ^ (2 ** eventOrState.target.id);
+    } else if (eventOrState.constructor === Number) {
+        state = eventOrState
     }
+    state = mirrorBit(state, 4, 12);
+    state = mirrorBit(state, 6, 14);
+    state = mirrorBitOr(state, 5, 13, 7);
+    (state & 2**15) ?
+        canvas.classList.add("masked") :
+        canvas.classList.remove("masked");
+    sortedLines(canvas).forEach(line => {
+        line.classList.toggle("hide", !(state & (2 ** line.id)));
+    });
+    // props.modelValue = ref(state);
+    emit("update:modelValue", state);
 }
 
 watch(
@@ -91,42 +116,22 @@ watch(
 );
 
 onMounted(() => {
+    canvas = root.value.querySelector<SVGElement>("g#canvas");
     updateState(props.modelValue);
-    const canvas = root.value?.querySelector<SVGElement>("g#canvas");
-    for (let i = 0; i < 16; i++) {
-        if ([7, 12, 14].includes(i)) continue;
-        const lineId = `#${i < 8 ? "high" : "low"}_${(i % 8) + 1}`;
-        const lineElem = root.value?.querySelector<SVGElement>(lineId);
-        if (!lineElem) throw "Element not found: " + lineId;
-        lineElem.addEventListener("click", (event) => {
-            lineElem.classList.toggle("hide");
-            let newValue = props.modelValue ^ (2 ** i);
-            if ([4, 6].includes(i)) {
-                newValue = newValue ^ (2 ** (i + 8))
-            } else if ([5, 13].includes(i)) {
-                if (newValue & (2 ** 5 | 2 ** 13)) {
-                    newValue |=   2 ** 7
-                } else {
-                    newValue &= ~(2 ** 7)
-                }
-            }
-            if (i == 15) {
-                if (newValue & 2 ** 15) {
-                    canvas?.classList.add("masked");
-                } else {
-                    canvas?.classList.remove("masked");
-                }
-            }
-            updateState(newValue, i);
-            emit("update:modelValue", newValue);
-        });
-    }
+    sortedLines(canvas).forEach(line => {
+        line.addEventListener("click", updateState);
+    });
 });
 
 function line(n: number) {}
 </script>
 
 <style scoped>
+/* For debug highlighting purposes. */
+path.stain {
+    stroke: red;
+}
+
 .line {
     fill: none;
     stroke: #000000;

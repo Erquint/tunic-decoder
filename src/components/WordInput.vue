@@ -19,7 +19,7 @@
                 <span class="text-muted" v-if="props.word.glyphs.length > 0">{{
                     props.word.toGlyphString()
                 }}</span>
-                {{ props.glyph.encoded.toString(16).padStart(4, "0") }}
+                {{ props.glyph.encoded.toString(16).toUpperCase().padStart(4, "0") }}
             </div>
             <div v-if="showSecrets">
                 <span class="text-muted" v-if="props.word.glyphs.length > 0">{{
@@ -85,7 +85,7 @@ const state = reactive({
     stashedGlyphs: [] as number[],
     row: undefined as number | undefined,
 });
-const canvasHeight = (glyphOffset + hl) * glyphScale;
+const canvasHeight = (2 * glyphOffset + hl) * glyphScale;
 
 watch(
     () => props.word,
@@ -99,7 +99,7 @@ watch(
 
 function renderCanvas() {
     if (!canvas.value) return;
-    canvas.value.width = (glyphOffset + (props.word.glyphs.length + 1) * hs) * glyphScale;
+    canvas.value.width = (2 * glyphOffset + (props.word.glyphs.length + 1) * hs) * glyphScale;
     canvas.value.height = canvasHeight;
     const context = canvas.value.getContext("2d");
     if (!context) return;
@@ -226,9 +226,11 @@ function popGlyph() {
     state.stashedGlyphs.unshift(old);
 }
 
-function setState(newState: number) {
-    if (newState == props.glyph.encoded) renderCanvas();
-    props.glyph.encoded = newState;
+function setState(state: number) {
+    if (state == props.glyph.encoded) {
+        renderCanvas();
+    }
+    props.glyph.encoded = state;
 }
 
 function newWord() {
