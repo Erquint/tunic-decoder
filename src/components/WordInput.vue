@@ -99,7 +99,7 @@ watch(
 
 function renderCanvas() {
     if (!canvas.value) return;
-    canvas.value.width = (2 * glyphOffset + (props.word.glyphs.length + 1) * hs) * glyphScale;
+    canvas.value.width = (2 * glyphOffset + (props.word.glyphs.length + state.stashedGlyphs.length + 1) * hs) * glyphScale;
     canvas.value.height = canvasHeight;
     const context = canvas.value.getContext("2d");
     if (!context) return;
